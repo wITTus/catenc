@@ -1,0 +1,8 @@
+[package]
+name = "catenc"
+version = "0.1.0"
+authors = ["Sascha Wittkowski"]
+
+[dependencies]
+base64 = "~0.11.0"
+clap = "2.33.0"
