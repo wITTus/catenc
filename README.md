@@ -1,13 +1,17 @@
 # Catenc
-Category/Label encoder for the shell written in Rust.
+Category/label encoder for the shell written in Rust.
 
 ## What is it?
 
-In Machine Learning categories or labels in datasets often need to be encoded to numerical values.
+This program translates words to numbers.
+
+In Machine Learning "categories" or "labels" in datasets often need to be encoded to numerical values.
 
 Usually this is done by using something like Scikit-Learn's `sklearn.preprocessing.LabelEncoder` for Python.
 
-This command line program is an attempt to do it on the shell.
+Another use-case could be data pseudonymization.
+
+This command line program provides a convenient method to do it on the shell.
 
 ## Setup
 
@@ -50,7 +54,7 @@ $ cat PETS | ./catenc
 ### Encode the first two of three categories:
 
 ```
-$ cat PETS | ./catenc -k 1,2 -t';'
+$ cat PETS | ./catenc -k 1,2 -t';' -T mydict
 0;0;4
 1;1;6
 2;1;2
@@ -60,9 +64,27 @@ $ cat PETS | ./catenc -k 1,2 -t';'
 0;0;3
 ```
 
+By specifying `-T` we generated a new file `mydict` that contains a mapping from the new to the old values.
+
+```
+$ cat mydict | jq .
+[
+  {
+    "2": "BIRD",
+    "1": "CAT",
+    "0": "DOG"
+  },
+  {
+    "1": "FEMALE",
+    "0": "MALE"
+  }
+]
+```
+
 ### Features
 
 * Encode to integers as either text or Base64 (`-e`) encoded values
 * Encode entire lines or individual columns
 * Configurable column separator
+* Generate dictionary for later decoding
 * Written in Rust 😉

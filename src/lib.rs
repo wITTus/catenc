@@ -2,8 +2,10 @@ pub mod lib {
     use std::borrow::Borrow;
     use std::cmp::max;
     use std::collections::HashMap;
+    use std::fs;
 
     pub fn process_lines<F: FnMut(String), I>(lines: I, mode_base64: bool, mut print_fn: F)
+                                              -> HashMap<String, String>
         where I: Iterator,
               I::Item: Borrow<str>,
     {
@@ -15,9 +17,12 @@ pub mod lib {
             let e = process_token(l.to_string(), &mut dict, &mut counter, mode_base64);
             print_fn(e);
         });
+
+        return dict;
     }
 
     pub fn process_lines_tokenized<F: FnMut(String), I>(lines: I, mode_base64: bool, separator: &str, indices: Vec<usize>, mut print_fn: F)
+                                                        -> Vec<HashMap<String, String>>
         where I: Iterator,
               I::Item: Borrow<str>,
     {
@@ -43,6 +48,8 @@ pub mod lib {
                 .join(separator)
             )
             .for_each(|t| print_fn(t));
+
+        return dicts;
     }
 
     fn process_token(line: String, dict: &mut HashMap<String, String>, counter: &mut usize, mode_base64: bool) -> String {
@@ -66,6 +73,27 @@ pub mod lib {
         let raw_bytes: [u8; 8] = unsafe { std::mem::transmute(counter) };
         let count = max(1, raw_bytes.iter().filter(|&b| *b > 0).count());
         base64::encode(&raw_bytes[0..count])
+    }
+
+    pub fn invert_hashmap<T>(m: &HashMap<T, T>) -> HashMap<&T, &T>
+        where T: std::cmp::Eq,
+              T: std::hash::Hash
+    {
+        let mut r = HashMap::new();
+        for (k, v) in m {
+            r.insert(v, k);
+        }
+        r
+    }
+
+    pub fn write_dictionary(filepath: &str, dicts: Vec<HashMap<String, String>>) {
+        let reversed_dict: Vec<HashMap<&String, &String>> = dicts
+            .iter()
+            .map(|m| invert_hashmap(&m))
+            .collect();
+
+        let data = serde_json::to_string(&reversed_dict).expect("Couldn't generate JSON dictionary");
+        fs::write(filepath, data).expect("Unable to write file");
     }
 }
 
