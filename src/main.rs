@@ -12,7 +12,7 @@ fn main() {
     let matches = App::new("catenc")
         .version("1.0")
         .author("Sascha W.")
-        .about("Category/label encoder for the shell. Converts categorical columns to numeric columns.")
+        .about("Category (or label) encoder for the shell. Converts categorical columns to numeric columns.\n\nVisit https://github.com/wITTus/catenc")
         .arg(Arg::with_name("numeric").short("n").help("Numeric text output (default)"))
         .arg(Arg::with_name("base64").short("e").help("Base64 text output"))
         .arg(Arg::with_name("separator").short("t").takes_value(true).help("Column separator (default: ' ')"))

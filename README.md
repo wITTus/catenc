@@ -1,5 +1,5 @@
 # Catenc
-Category/label encoder for the shell written in Rust.
+Category (or label) encoder for the shell written in Rust.
 
 ## What is it?
 
